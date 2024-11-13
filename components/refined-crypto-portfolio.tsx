@@ -2,15 +2,43 @@
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { Github, Linkedin, Mail, Twitter, Zap, Cpu, Globe, Database, Code, Users } from 'lucide-react'
+import { Github, Linkedin, Mail, Twitter, Zap, Cpu, Globe, Database, Code, Users } from "lucide-react"
 import Link from "next/link"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import { motion, useScroll, useSpring, useMotionValue, useTransform } from "framer-motion"
-import dynamic from 'next/dynamic'
+import { Canvas, useFrame } from '@react-three/fiber'
+import { Text, Box, Sphere, OrbitControls } from '@react-three/drei'
 
-const Background3D = dynamic(() => import('@/components/Background3D'), { ssr: false })
+const FloatingParticle = ({ position }) => {
+  const mesh = useRef()
+  useFrame((state) => {
+    mesh.current.position.y = position[1] + Math.sin(state.clock.elapsedTime + position[0]) * 0.2
+  })
+  return (
+    <Sphere ref={mesh} args={[0.1, 16, 16]} position={position}>
+      <meshStandardMaterial color="#4B0082" emissive="#4B0082" emissiveIntensity={0.5} />
+    </Sphere>
+  )
+}
 
-export default function Home() {
+const Background3D = () => {
+  return (
+    <Canvas style={{ position: 'fixed', top: 0, left: 0, pointerEvents: 'none' }}>
+      <ambientLight intensity={0.5} />
+      <pointLight position={[10, 10, 10]} />
+      <OrbitControls enableZoom={false} enablePan={false} enableRotate={false} />
+      {Array.from({ length: 50 }).map((_, i) => (
+        <FloatingParticle key={i} position={[
+          Math.random() * 20 - 10,
+          Math.random() * 20 - 10,
+          Math.random() * 20 - 15
+        ]} />
+      ))}
+    </Canvas>
+  )
+}
+
+export function RefinedCryptoPortfolio() {
   const [activeSection, setActiveSection] = useState('about')
   const { scrollYProgress } = useScroll()
   const scaleX = useSpring(scrollYProgress, {
@@ -19,14 +47,8 @@ export default function Home() {
     restDelta: 0.001
   })
 
-  const [cryptoPrice, setCryptoPrice] = useState({ eth: 2000, btc: 30000 })
+  const [cryptoPrice, setCryptoPrice] = useState({ eth: 0, btc: 0 })
   const [blockNumber, setBlockNumber] = useState(0)
-
-  const sections = ['about', 'experience', 'skills', 'projects', 'community', 'contact']
-
-  const glowX = useMotionValue(0)
-  const glowY = useMotionValue(0)
-  const glowOpacity = useTransform(glowX, [-100, 100], [0, 1])
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -37,17 +59,23 @@ export default function Home() {
       setBlockNumber(prev => prev + 1)
     }, 5000)
 
+    return () => clearInterval(interval)
+  }, [])
+
+  const sections = ['about', 'experience', 'skills', 'projects', 'community', 'contact']
+
+  const glowX = useMotionValue(0)
+  const glowY = useMotionValue(0)
+  const glowOpacity = useTransform(glowX, [-100, 100], [0, 1])
+
+  useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       glowX.set(e.clientX)
       glowY.set(e.clientY)
     }
 
     window.addEventListener('mousemove', handleMouseMove)
-
-    return () => {
-      clearInterval(interval)
-      window.removeEventListener('mousemove', handleMouseMove)
-    }
+    return () => window.removeEventListener('mousemove', handleMouseMove)
   }, [glowX, glowY])
 
   return (
