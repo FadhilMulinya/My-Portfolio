@@ -18,6 +18,7 @@ import {
 } from "framer-motion";
 import dynamic from "next/dynamic";
 import Image from "next/image";
+import { InfiniteMovingCardsDemo } from "@/components/app/infiniteCardDemo";
 
 const Background3D = dynamic(() => import("@/components/Background3D"), {
   ssr: false,
@@ -156,7 +157,7 @@ export default function Home() {
             transition={{ duration: 1, type: "spring" }}
           >
             <img
-              src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image%20(1).png-c4YqLea7pPnlh3dODGGY1oAcSQz2Dq.jpeg"
+              src="/animeprofile.png"
               alt="Profile"
               className="w-full h-full object-cover"
               width={256}
@@ -537,7 +538,7 @@ export default function Home() {
           </div>
         </div>
       </section>
-
+<InfiniteMovingCardsDemo />
       {/* Contact Section */}
       <section id="contact" className="py-20 bg-gray-900/50">
         <div className="container mx-auto px-4">
