@@ -19,6 +19,7 @@ import {
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import { InfiniteMovingCardsDemo } from "@/components/app/infiniteCardDemo";
+import { LampDemo } from "@/components/ui/lamp";
 
 const Background3D = dynamic(() => import("@/components/Background3D"), {
   ssr: false,
@@ -143,6 +144,7 @@ export default function Home() {
           </div>
         </div>
       </nav>
+  
 
       {/* Hero Section */}
       <section
